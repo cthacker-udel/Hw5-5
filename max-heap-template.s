@@ -33,19 +33,18 @@ main:
 	swi 0x6c	@ read an integer put in r0
 	BCS CloseF	@ branch when the end of the file is reached
 
-	@print the integer that's just read 
-	mov r1, r0	@ copy r0 to r1 for printing
-	MOV r0, #1	@ Load 1 into register r0 (stdout handle) 
-	SWI 0x6b	@ Print integer in register r1 to stdout
-	@ print a space
-	mov r0, #1
-	ldr  r1,  =Space
-	swi  0x69
-
 	@ TO-DO: You should comment out the above code for printing
 	@ Instead, you creat a new node and save the integer into the first 4 bytes of the node
 	@ Put the base node address in r0, and the address of the to-be-inserted node in r1
 	@ call the subroutine Insert to insert the newly created node into the MaxHeap
+	
+	mov r0, r1 @ move int read into r1
+	mov r0, #12 @ allocate 12 bytes for node
+	swi 0x12 @ allocate space for new node and set r0 to the base address of newly created node
+	str r1, [ r0, #0 ] @ storing int read into first 4 bytes of node
+	mov r0, r1 @ moving to-be-inserted node's address into r1
+	ldr r0, =MyHeap @ moving base node address into r0
+
 
         BL Insert
 	
