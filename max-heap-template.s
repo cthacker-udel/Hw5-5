@@ -16,15 +16,18 @@ main:
 	ldr r0, [r1]
 	swi 0x6c	@ read an integer put in r0
 
-	@ To-Do: Here you should creat a base node containing the just-read integer for your MaxHeap
+	@ To-Do: Here you should creat a base node (ROOT NODE) containing the just-read integer for your MaxHeap
 	@ and save the base node address to the label MyHeap (which is declared in .data) for later references	
-	mov R0, R1 @ store int read into r1
-	mov R0, #12 @ allocate 12 bytes
-	swi 0x12 @ allocating space and set r0 to base addr
-	ldr r3, =MyHeap @grab memory address of MyHeap
-	mov r0, r3 @saving base address to MyHeap
-	str r1,[r0, #0] @saving integer into node
+	mov R1, R0			@ store int read into r1
+	mov R0, #12			@ allocate 12 bytes
+	swi 0x12 			@ allocating space and set r0 to base addr
+	str r0, [=MyHeap, #0] @ Store root node address into heap 
+	str r1, [r0, #0]	@ saving integer into node
+	mov r3, #0
+	str r3, [r0, #4]	@ set left child null
+	str r3, [r0, #8]	@ set right child null
 	
+	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     Loop:
 	@ read integer from file
@@ -38,15 +41,16 @@ main:
 	@ Put the base node address in r0, and the address of the to-be-inserted node in r1
 	@ call the subroutine Insert to insert the newly created node into the MaxHeap
 	
-	mov r0, r1 @ move int read into r1
+	@ mov r0, r1 @ move int read into r1
 	mov r0, #12 @ allocate 12 bytes for node
 	swi 0x12 @ allocate space for new node and set r0 to the base address of newly created node
 	str r1, [ r0, #0 ] @ storing int read into first 4 bytes of node
 	mov r0, r1 @ moving to-be-inserted node's address into r1
 	ldr r0, =MyHeap @ moving base node address into r0
 
+	
 
-        BL Insert
+    BL Insert		@ call insert function
 	
 	B Loop			@ go back to read next integer
 
@@ -61,6 +65,8 @@ main:
 	
 exit:	SWI 0x11		@ Stop program execution 
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 @ TO-DO: write the Insert function below
 @ The function takes two arguments: a pointer to the heap (in r0) and a pointer to a new node to be inserted to the heap (in r1) 
 @ The function returns (in r0) a pointer to the root node (potentially can be the new node) of the heap
@@ -68,6 +74,7 @@ Insert:
 
 	mov pc, r14
 	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 @ TO_DO: write deleteMax function below
 @ call-by-reference: the function takes a pointer-to-pointer as argument (in r0)
