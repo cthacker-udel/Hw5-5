@@ -18,11 +18,11 @@ main:
 
 	@ To-Do: Here you should creat a base node (ROOT NODE) containing the just-read integer for your MaxHeap
 	@ and save the base node address to the label MyHeap (which is declared in .data) for later references	
-	mov R1, R0			@ store int read into r1
+	mov R2, R0			@ store int read into r2
 	mov R0, #12			@ allocate 12 bytes
 	swi 0x12 			@ allocating space and set r0 to base addr
 	str r0, [=MyHeap, #0] @ Store root node address into heap 
-	str r1, [r0, #0]	@ saving integer into node
+	str r2, [r0, #0]	@ saving integer into node
 	mov r3, #0
 	str r3, [r0, #4]	@ set left child null
 	str r3, [r0, #8]	@ set right child null
@@ -41,12 +41,15 @@ main:
 	@ Put the base node address in r0, and the address of the to-be-inserted node in r1
 	@ call the subroutine Insert to insert the newly created node into the MaxHeap
 	
-	@ mov r0, r1 @ move int read into r1
-	mov r0, #12 @ allocate 12 bytes for node
-	swi 0x12 @ allocate space for new node and set r0 to the base address of newly created node
-	str r1, [ r0, #0 ] @ storing int read into first 4 bytes of node
-	mov r0, r1 @ moving to-be-inserted node's address into r1
-	ldr r0, =MyHeap @ moving base node address into r0
+	mov R2, R0			@ store int read into r2
+	mov R0, #12			@ allocate 12 bytes
+	swi 0x12 			@ allocating space and set r0 to base addr
+	mov R1, R0			@ move address in R0 into R1
+	ldr r0, [=MyHeap, #0] @ Load root node address from heap into R0
+	mov r3, #0
+	str r2, [r1, #0]	@ saving integer into node
+	str r3, [r1, #4]	@ set left child null
+	str r3, [r1, #8]	@ set right child null
 
 	
 
