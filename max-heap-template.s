@@ -21,7 +21,8 @@ main:
 	mov R2, R0			@ store int read into r2
 	mov R0, #12			@ allocate 12 bytes
 	swi 0x12 			@ allocating space and set r0 to base addr
-	str r0, [=MyHeap, #0] @ Store root node address into heap 
+	ldr r1, =MyHeap @ Loads variable address then stores inside register
+	str r0, [r1] @ Store root node address into heap 
 	str r2, [r0, #0]	@ saving integer into node
 	mov r3, #0
 	str r3, [r0, #4]	@ set left child null
