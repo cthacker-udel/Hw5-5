@@ -42,11 +42,11 @@ main:
 	@ Put the base node address in r0, and the address of the to-be-inserted node in r1
 	@ call the subroutine Insert to insert the newly created node into the MaxHeap
 	
-	mov R2, R0			@ store int read into r2
-	mov R0, #12			@ allocate 12 bytes
+	mov r2, r0			@ store int read into r2
+	mov r0, #12			@ allocate 12 bytes
 	swi 0x12 			@ allocating space and set r0 to base addr
-	mov R1, R0			@ move address in R0 into R1
-	ldr r0, [=MyHeap, #0] @ Load root node address from heap into R0
+	mov r1, r0			@ move address in R0 into R1
+	ldr r0, =MyHeap @ Load root node address from heap into R0
 	mov r3, #0
 	str r2, [r1, #0]	@ saving integer into node
 	str r3, [r1, #4]	@ set left child null
