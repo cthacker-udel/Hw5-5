@@ -110,76 +110,76 @@ greaterThan:
 @ deleteMax should return root.data (to r0) and nullify the pointer to the root node
 deleteMax:
 
-	ldr r3, [r0, #4] @ load in left child
-	ldr r4, [r0, #8] @ load in right child
-	add r5, r4, r3 @ adding values of LC and RC, if both are null result is 0
-	cmp r5, #0 @ testing if root has no children
+	ldr r3, [r0, #4] 	@ load in left child
+	ldr r4, [r0, #8] 	@ load in right child
+	add r5, r4, r3	    @ adding values of LC and RC, if both are null result is 0
+	cmp r5, #0 			@ testing if root has no children
 	bne hc
 	mov r0, [ r0, #0 ]
 	str #0, =MaxHeap
 	mov pc, r14
 
 hc:
-	ldr r3, [ r1, #0 ] @ grabbing int from inserted node
-	str #0, r1 @ making inserted node null (effectively deleting it)
-	str r3, [ r0, #0 ] @ update root value to inserted value
+	ldr r3, [ r1, #0 ]  @ grabbing int from inserted node
+	str #0, r1		    @ making inserted node null (effectively deleting it)
+	str r3, [ r0, #0 ]  @ update root value to inserted value
 
 while:
 
-	ldr r3, [ r0, #4 ] @ load left child into r3
-	ldr r4, [ r0, #8 ] @ load right child into r4
-	add r5, r3, r4 @ adding together both addresses of LC and RC
-	cmp r5, r3 @ testing if the addition of both addresses only results in r5 equaling the LC, which means that the RC is 0 or NULL
-	beq lcd @ branch to lcd(left child delete) .. ( basically swapping the values of root and LC )
-	cmp r5, r4  @ testing if the addition of both addresses only results in r5 equaling the RC, which means that the LC is 0 or NULL 
-	beq rcd @ branch to rcd(right child delete) .. (basically swapping the values or root and RC )
-	b bcd @ branch to bcd(both child delete) .. doesn't actually delete both, just the operation that happens if root has both children, selection of whether right or left happens in bcd
+	ldr r3, [ r0, #4 ]  @ load left child into r3
+	ldr r4, [ r0, #8 ]  @ load right child into r4
+	add r5, r3, r4 		@ adding together both addresses of LC and RC
+	cmp r5, r3 			@ testing if the addition of both addresses only results in r5 equaling the LC, which means that the RC is 0 or NULL
+	beq lcd 			@ branch to lcd(left child delete) .. ( basically swapping the values of root and LC )
+	cmp r5, r4 		    @ testing if the addition of both addresses only results in r5 equaling the RC, which means that the LC is 0 or NULL 
+	beq rcd			    @ branch to rcd(right child delete) .. (basically swapping the values or root and RC )
+	b bcd			    @ branch to bcd(both child delete) .. doesn't actually delete both, just the operation that happens if root has both children, selection of whether right or left happens in bcd
 
 lcd:
 
-	ldr r4 , [r0, #0 ] @ load root's value into r4
-	ldr r5, [ r3, #0 ] @ load lefts value into r5
-	cmp r4, r5 @ compare root's value to left's value, if root's value is greater than lc value, then no need to swap values, and return
-	movge pc, lr @ only move pc into lr if the comparison of the root and lc value results in the root value being greater then lc
-	str r5, [ r0, #0 ] @ store lc value in root
-	str r4, [ r3, #0 ] @ store root value in lc
-	mov r0, r3 @ update root to node that we moved the root value to
-	b while @ rerun loop with updated root
+	ldr r4 , [r0, #0 ]  @ load root's value into r4
+	ldr r5, [ r3, #0 ]  @ load lefts value into r5
+	cmp r4, r5 			@ compare root's value to left's value, if root's value is greater than lc value, then no need to swap values, and return
+	movge pc, lr 		@ only move pc into lr if the comparison of the root and lc value results in the root value being greater then lc
+	str r5, [ r0, #0 ]  @ store lc value in root
+	str r4, [ r3, #0 ]  @ store root value in lc
+	mov r0, r3 			@ update root to node that we moved the root value to
+	b while 			@ rerun loop with updated root
 
 rcd:
 
-	ldr r3, [ r0, #0 ] @ loading root value into r3
-	ldr r5, [ r4, #0 ] @ load rc value into r5
-	cmp r3, r5 @ compare root value to rc value
-	movge pc, lr @ if root value > rc value, then end deleteMax and return
-	str r3, [ r4, #0 ] @ storing root value into rc
-	str r5, [ r0, #0 ] @ storing rc value into root
-	mov r0, r4 @ updating root to be right child (because value was swapped)
-	b while @ rerun loop
+	ldr r3, [ r0, #0 ]  @ loading root value into r3
+	ldr r5, [ r4, #0 ]  @ load rc value into r5
+	cmp r3, r5 			@ compare root value to rc value
+	movge pc, lr 		@ if root value > rc value, then end deleteMax and return
+	str r3, [ r4, #0 ] 	@ storing root value into rc
+	str r5, [ r0, #0 ]  @ storing rc value into root
+	mov r0, r4 			@ updating root to be right child (because value was swapped)
+	b while 			@ rerun loop
 
 
 bcd:
 
-	ldr r5, [ r3, #0 ] @ loading lc value into r5
-	ldr r6, [ r4, #0 ] @ loading rc value into r6
-	cmp r5, [ r0, #0 ] @ comparing lc value to root value
-	bgt bcdelse @ jump to comparing the right child and left child value, we cannot jump to lcd because we don't know if lc value < rc value
-	cmp r6, [ r0, #0 ] @ comparing rc value to root value
-	bgt bcdelse @ jump to comparing the right child and left child value, we cannot jump to rcd because we don't know if rc value < lc value
-	mov pc, lr @ return, end function
+	ldr r5, [ r3, #0 ]  @ loading lc value into r5
+	ldr r6, [ r4, #0 ]  @ loading rc value into r6
+	cmp r5, [ r0, #0 ]  @ comparing lc value to root value
+	bgt bcdelse 		@ jump to comparing the right child and left child value, we cannot jump to lcd because we don't know if lc value < rc value
+	cmp r6, [ r0, #0 ]  @ comparing rc value to root value
+	bgt bcdelse 		@ jump to comparing the right child and left child value, we cannot jump to rcd because we don't know if rc value < lc value
+	mov pc, lr 			@ return, end function
 
 bcdelse:
 
-	cmp r5, r6 @ comapring lcv with rcv
-	bgt bcdelsegt @ if lc is > right child, then swap with lower value, so right child 
+	cmp r5, r6 			@ comapring lcv with rcv
+	bgt bcdelsegt 		@ if lc is > right child, then swap with lower value, so right child 
 
 bcdelsegt:
 
-	ldr r5, [ r0, #0 ] @ load root value into r5
-	str r6, [ r0, #0 ] @ store rcv into root
-	str r5, [ r4, #0 ] @ store root vaue in right child
-	mov r0, r4 @ update root to be right child
-	b while @ re-run loop
+	ldr r5, [ r0, #0 ]  @ load root value into r5
+	str r6, [ r0, #0 ]  @ store rcv into root
+	str r5, [ r4, #0 ]  @ store root vaue in right child
+	mov r0, r4 			@ update root to be right child
+	b while 			@ re-run loop
 
 
 @ This subroutine prints numbers from MaxHeap sorted (in descending order)
