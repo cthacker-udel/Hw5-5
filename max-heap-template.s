@@ -108,47 +108,75 @@ greaterThan:
 @ deleteMax should return root.data (to r0) and nullify the pointer to the root node
 
 deleteMax:
+
+	@@@@@ First checking is root HAS children
     mov r10, [ r0, #0 ]     @ get integer from maximum
 	mov r9, #0				@ initializing parent to null
 	mov r8, #2				@ initializing traverse to 2
+	add r5, [r0, #4], [r0, #8] 		@ checking if root has no children
+	cmp r5, #0 		@ checking if addition of both left child and right child == 0 <-- meaning root has no children
+	streq #0, =MaxHeap 		@ initializing pointer to root to 0
+	moveq r0, [r0, #0]		@ moving root value to r0
+	moveq pc, r14			@ return root
+	b while
 	
 while:
+
+	@@@@@ if root has children, reaches this point
     ldr r3, [r0, #4]     @ load in left child
     ldr r4, [r0, #8]     @ load in right child
     add r5, r4, r3        @ adding values of LC and RC, if both are null result is 0
     cmp r5, #0             @ NULL CASE testing if root has no children
-	streq #0, =MaxHeap 		@ NULLIFY pointer to root node
-	moveq r0, [r0, #0] 		@ Move root data to r0
-    moveq pc, r14 			@ return root
+	beq nc
+	b else
+nc:
 
+	@@@@@ reached node that has no children, aka leaf BASE CASE
+	cmpeq r0, [r9, #4]		@ compare if parent left child equals leaf
+	streq #0, [r9, #4]		@ if parent left child equals leaf node, delete the parent's pointer to the leaf
+	cmpeq r0, [r9, #8]		@ compare if parents right child is the leaf
+	streq #0, [r9, #8]		@ if parent right child equals current leaf, delete the parent`s pointer to the leaf
+	moveq r0, r10			@ move maximum value to r0
+    moveq pc, r14 			@ return root
+	
+else:
+
+	@@@@@@@ only has left child
     cmp r5, r3 				@ checks if it only has a left node
     ldr r6, [r3, #0]		@ load left childs value into r6
     streq r6, [r0, #0] 		@ store left childs value into root value
 	moveq r9, r0			@ store root into parent
 	moveq r8, #0			@ denote that we are traversing left
-	beq lc
+	moveq r0, r3
+	beq while
 
+	@@@@@@@ only has right child
     cmp r5, r4				@ checks if it only has a right child
     ldr r6, [r4, #0]		@ load right child value into r6
 	streq r6, [r0, #0]		@ store right child value into root
 	moveq r9, r0			@ store root into parent
 	moveq r8, #1 			@ denote that we are traversing right
-	beq rc
+	moveq r0, r4
+	beq while
 
     ldr r6, [r3, #0]		@ LC value -> r6
 	ldr r7, [r4, #0]		@ RC value -> r7
 	
+	@@@@ comparing both of the children
 	cmp r6, r7
 	movgt r8, #0
-	bgt lc
+	ldrgt r6, [r3, #0]
+	strgt r6, [r0, #0]
+	movgt r9, r0
+	movgt r0, r3
+	bgt while
 	mov r8, #1
-	b rc
-	
-lc:
-	code
-	
-rc:
-	code
+	ldr r6, [r4, #0]
+	str r6, [r0, #0]
+	mov r9, r0
+	mov r8, #1
+	mov r0, r4
+	b while
 
 
 @ This subroutine prints numbers from MaxHeap sorted (in descending order)
