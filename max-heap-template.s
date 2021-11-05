@@ -83,24 +83,37 @@ Insert:
 	ble lessThan
 	b greaterThan
 
-@ called when insert`s integer is less than the root
+@ called when insert`s integer is less than the base node
 lessThan:
 	cmp r4, #0			@ check if base left child is null
 	streq r1, [r0, #4]
+	moveq r0, =MyHeap
 	moveq pc, r14
+	
 	cmp r5, #0			@ check if base right child is null
 	streq r1, [r0, #8]
+	moveq r0, =MyHeap
 	moveq pc, r14
-	str r1, [r0, #4]	@ if both children not NULL, replace left child with insert
+	
+	ldr r6, [r4, #0]	@ if both children not NULL, load left child integer
+	ldr r7, [r5, #0]	@ load right child integer
+	cmp r2, r6			@ compare insert and left integers
+	movlt r0, r4
+	blt Insert			@ recursive call with left child as base
+	cmp r2, r7
+	movlt r0, r5		@ compare insert and right integers
+	blt Insert			@ recursive call with right child as base
+	
+	str r1, [r0, #4]	@ if neither child integers are bigger than insert, replace left child with insert
 	str r4, [r1, #8]	@ the old left child is now the insert's right child
 	mov pc, r14
 	
 @ called when insert`s integer is larger than the root
 greaterThan:
-	ldr r5, =MyHeap @ Loading MyHeap address into temp variable to be able to store r1 into the address
-	str r1, r5  @ Storing r1 into r5(MyHeap address)
-	str r0, [r1, #4] @ Storing r0 in  r1`s left child
-	mov pc, r14 @ moving line 59 into the next line to execute
+	ldr r5, =MyHeap 	@ Loading MyHeap address into temp variable to be able to store r1 into the address
+	str r1, r5  		@ Storing r1 into r5(MyHeap address)
+	str r0, [r1, #4] 	@ Storing r0 in  r1`s left child
+	mov pc, r14 		@ moving line 59 into the next line to execute
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
