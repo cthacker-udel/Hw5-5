@@ -83,7 +83,7 @@ Insert:
 	ble lessThan
 	b greaterThan
 
-@ called when insert's integer is less than the root
+@ called when insert`s integer is less than the root
 lessThan:
 	cmp r4, #0			@ check if base left child is null
 	streq r1, [r0, #4]
@@ -95,11 +95,12 @@ lessThan:
 	str r4, [r1, #8]	@ the old left child is now the insert's right child
 	mov pc, r14
 	
-@ called when insert's integer is larger than the root
+@ called when insert`s integer is larger than the root
 greaterThan:
-	str r1, [=MyHeap, #0]
-	str r0, [r1, #4]
-	mov pc, r14
+	ldr r5, =MyHeap @ Loading MyHeap address into temp variable to be able to store r1 into the address
+	str r1, r5  @ Storing r1 into r5(MyHeap address)
+	str r0, [r1, #4] @ Storing r0 in  r1`s left child
+	mov pc, r14 @ moving line 59 into the next line to execute
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
