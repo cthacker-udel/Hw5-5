@@ -115,10 +115,10 @@ deleteMax:
 	mov r8, #2				@ initializing traverse to 2
 	add r5, [r0, #4], [r0, #8] 		@ checking if root has no children
 	cmp r5, #0 		@ checking if addition of both left child and right child == 0 <-- meaning root has no children
-	streq #0, =MaxHeap 		@ initializing pointer to root to 0
-	moveq r0, [r0, #0]		@ moving root value to r0
-	moveq pc, r14			@ return root
-	b while
+	streq #0, =MaxHeap 		@ If tree only has root, initialize pointer to root to 0
+	moveq r0, [r0, #0]		@ If tree only has root, moving root value to r0
+	moveq pc, r14			@ If tree only has root, return root
+	b while					@ Else, start while loop
 	
 while:
 
@@ -127,9 +127,10 @@ while:
     ldr r4, [r0, #8]     @ load in right child
     add r5, r4, r3        @ adding values of LC and RC, if both are null result is 0
     cmp r5, #0             @ NULL CASE testing if root has no children
-	beq nc
-	b else
-nc:
+	beq noChild
+	b hasChild
+	
+noChild:
 
 	@@@@@ reached node that has no children, aka leaf BASE CASE
 	cmpeq r0, [r9, #4]		@ compare if parent left child equals leaf
@@ -139,11 +140,11 @@ nc:
 	moveq r0, r10			@ move maximum value to r0
     moveq pc, r14 			@ return root
 	
-else:
+hasChild:
 
 	@@@@@@@ only has left child
     cmp r5, r3 				@ checks if it only has a left node
-    ldr r6, [r3, #0]		@ load left childs value into r6
+    ldreq r6, [r3, #0]		@ load left childs value into r6
     streq r6, [r0, #0] 		@ store left childs value into root value
 	moveq r9, r0			@ store root into parent
 	moveq r8, #0			@ denote that we are traversing left
@@ -152,8 +153,8 @@ else:
 
 	@@@@@@@ only has right child
     cmp r5, r4				@ checks if it only has a right child
-    ldr r6, [r4, #0]		@ load right child value into r6
-	streq r6, [r0, #0]		@ store right child value into root
+    ldreq r7, [r4, #0]		@ load right child value into r7
+	streq r7, [r0, #0]		@ store right child value into root
 	moveq r9, r0			@ store root into parent
 	moveq r8, #1 			@ denote that we are traversing right
 	moveq r0, r4
@@ -164,15 +165,13 @@ else:
 	
 	@@@@ comparing both of the children
 	cmp r6, r7
-	movgt r8, #0
-	ldrgt r6, [r3, #0]
+	movgt r8, #0			@ gt flag tripped when left int is greater than right
 	strgt r6, [r0, #0]
 	movgt r9, r0
 	movgt r0, r3
 	bgt while
-	mov r8, #1
-	ldr r6, [r4, #0]
-	str r6, [r0, #0]
+	mov r8, #1				@ instructions called only when right int is greater than left
+	str r7, [r0, #0]
 	mov r9, r0
 	mov r8, #1
 	mov r0, r4
