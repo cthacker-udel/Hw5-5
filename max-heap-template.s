@@ -23,10 +23,10 @@ main:
 	swi 0x12 			@ allocating space and set r0 to base addr
 	ldr r12, =MyHeap
 	str r0, [r12, #0] @ Store root node address into heap 
-	str r2, [r12, #0]	@ saving integer into node
+	str r2, [r0, #0]	@ saving integer into node
 	mov r3, #0
-	str r3, [r12, #4]	@ set left child null
-	str r3, [r12, #8]	@ set right child null
+	str r3, [r0, #4]	@ set left child null
+	str r3, [r0, #8]	@ set right child null
 	
 	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -47,6 +47,7 @@ main:
 	swi 0x12 			@ allocating space and set r0 to base addr
 	mov R1, R0			@ move address in R0 into R1
 	ldr r0, =MyHeap     @ Load root node address from heap into R0
+	ldr r0, [r0, #0]
 	mov r3, #0
 	str r2, [r1, #0]	@ saving integer into node
 	str r3, [r1, #4]	@ set left child null
@@ -88,11 +89,13 @@ lessThan:
 	cmp r4, #0			@ check if base left child is null
 	streq r1, [r0, #4]
 	ldreq r0, =MyHeap
+	ldreq r0, [r0, #0]
 	moveq pc, r14
 	
 	cmp r5, #0			@ check if base right child is null
 	streq r1, [r0, #8]
 	ldreq r0, =MyHeap
+	ldreq r0, [r0, #0]
 	moveq pc, r14
 	
 	ldr r6, [r4, #0]	@ if both children not NULL, load left child integer
@@ -126,7 +129,8 @@ deleteMax:
 
 	@@@@@ First checking is root HAS children
 	mov r2, #0				@ register to hold the constant value 0
-	ldr r12, =MyHeap
+	ldr r12, =MyHeap		@ set r12 to be pointer to root
+	ldr r12, [r12, #0]
     ldr r10, [ r0, #0 ]     @ get integer from maximum
 	mov r9, #0				@ initializing parent to null
 	mov r8, #2				@ initializing traverse to 2
