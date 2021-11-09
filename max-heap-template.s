@@ -140,7 +140,8 @@ deleteMax:
 	mov r5, #0
 	add r5, r3, r4 		@ checking if root has no children
 	cmp r5, #0 		@ checking if addition of both left child and right child == 0 <-- meaning root has no children
-	streq r2, [r12, #0]	@ If tree only has root, initialize pointer to root to 0
+	ldreq r12, =MyHeap
+	streq r2, [r12, #0]@ If tree only has root, initialize pointer to root to 0
 	@ ldreq r0, [r0, #0]		@ If tree only has root, moving root value to r0
 	moveq r0, r10
 	moveq pc, r14			@ If tree only has root, return root
