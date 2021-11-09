@@ -21,12 +21,12 @@ main:
 	mov R2, R0			@ store int read into r2
 	mov R0, #12			@ allocate 12 bytes
 	swi 0x12 			@ allocating space and set r0 to base addr
-	ldr r11, =MyHeap
-	str r0, [r11, #0] @ Store root node address into heap 
-	str r2, [r0, #0]	@ saving integer into node
+	ldr r12, =MyHeap
+	@ str r0, [r12, #0] @ Store root node address into heap 
+	str r2, [r12, #0]	@ saving integer into node
 	mov r3, #0
-	str r3, [r0, #4]	@ set left child null
-	str r3, [r0, #8]	@ set right child null
+	str r3, [r12, #4]	@ set left child null
+	str r3, [r12, #8]	@ set right child null
 	
 	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -79,7 +79,7 @@ Insert:
 	ldr r3, [r1, #0]	@ get integer of insert
 	ldr r4, [r0, #4]	@ get left child of parent
 	ldr r5, [r0, #8]	@ get right child of parent
-	cmp r2, r3			@ compare node integers
+	cmp r3, r2			@ compare node integers
 	ble lessThan
 	b greaterThan
 
@@ -110,8 +110,8 @@ lessThan:
 	
 @ called when insert`s integer is larger than the root
 greaterThan:
-	ldr r11, =MyHeap 	@ Loading MyHeap address into temp variable to be able to store r1 into the address
-	str r1, [r11, #0]		@ Storing r1 into r11(MyHeap address)
+	ldr r12, =MyHeap 	@ Loading MyHeap address into temp variable to be able to store r1 into the address
+	str r1, [r12, #0]		@ Storing r1 into r11(MyHeap address)
 	str r0, [r1, #4] 	@ Storing r0 in  r1`s left child
 	mov pc, r14 		@ moving line 59 into the next line to execute
 	
@@ -126,16 +126,18 @@ deleteMax:
 
 	@@@@@ First checking is root HAS children
 	mov r2, #0				@ register to hold the constant value 0
-	ldr r11, =MaxHeap
+	ldr r12, =MyHeap
     ldr r10, [ r0, #0 ]     @ get integer from maximum
 	mov r9, #0				@ initializing parent to null
 	mov r8, #2				@ initializing traverse to 2
 	ldr r3, [r0, #4]     @ load in left child
     ldr r4, [r0, #8]     @ load in right child
+	mov r5, #0
 	add r5, r3, r4 		@ checking if root has no children
 	cmp r5, #0 		@ checking if addition of both left child and right child == 0 <-- meaning root has no children
-	streq r2, [r11, #0]	@ If tree only has root, initialize pointer to root to 0
-	ldreq r0, [r0, #0]		@ If tree only has root, moving root value to r0
+	streq r2, [r12, #0]	@ If tree only has root, initialize pointer to root to 0
+	@ ldreq r0, [r0, #0]		@ If tree only has root, moving root value to r0
+	moveq r0, r10
 	moveq pc, r14			@ If tree only has root, return root
 	b while					@ Else, start while loop
 	
