@@ -22,7 +22,7 @@ main:
 	mov R0, #12			@ allocate 12 bytes
 	swi 0x12 			@ allocating space and set r0 to base addr
 	ldr r12, =MyHeap
-	@ str r0, [r12, #0] @ Store root node address into heap 
+	str r0, [r12, #0] @ Store root node address into heap 
 	str r2, [r12, #0]	@ saving integer into node
 	mov r3, #0
 	str r3, [r12, #4]	@ set left child null
@@ -97,10 +97,10 @@ lessThan:
 	
 	ldr r6, [r4, #0]	@ if both children not NULL, load left child integer
 	ldr r7, [r5, #0]	@ load right child integer
-	cmp r2, r6			@ compare insert and left integers
+	cmp r3, r6			@ compare insert and left integers
 	movlt r0, r4
 	blt Insert			@ recursive call with left child as base
-	cmp r2, r7
+	cmp r3, r7
 	movlt r0, r5		@ compare insert and right integers
 	blt Insert			@ recursive call with right child as base
 	
