@@ -131,6 +131,7 @@ deleteMax:
 	mov r2, #0				@ register to hold the constant value 0
 	ldr r12, =MyHeap		@ set r12 to be pointer to root
 	ldr r12, [r12, #0]
+	ldr r0, [r0, #0]
     ldr r10, [ r0, #0 ]     @ get integer from maximum
 	mov r9, #0				@ initializing parent to null
 	mov r8, #2				@ initializing traverse to 2
