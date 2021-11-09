@@ -114,8 +114,12 @@ lessThan:
 @ called when insert`s integer is larger than the root
 greaterThan:
 	ldr r12, =MyHeap 	@ Loading MyHeap address into temp variable to be able to store r1 into the address
+	ldr r0, [r12, #0]
 	str r1, [r12, #0]		@ Storing r1 into r11(MyHeap address)
 	str r0, [r1, #4] 	@ Storing r0 in  r1`s left child
+	
+	ldr r0, =MyHeap
+	ldr r0, [r0, #0]
 	mov pc, r14 		@ moving line 59 into the next line to execute
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
