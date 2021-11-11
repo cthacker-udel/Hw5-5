@@ -115,7 +115,7 @@ lessThan:
 greaterThan:
 	ldr r12, =MyHeap 	@ Loading MyHeap address into temp variable to be able to store r1 into the address
 	ldr r0, [r12, #0]
-	str r1, [r12, #0]		@ Storing r1 into r11(MyHeap address)
+	str r1, [r12, #0]	@ Storing r1 into r11(MyHeap address)
 	str r0, [r1, #4] 	@ Storing r0 in  r1`s left child
 	
 	ldr r0, =MyHeap
@@ -139,13 +139,13 @@ deleteMax:
     ldr r10, [ r0, #0 ]     @ get integer from maximum
 	mov r9, #0				@ initializing parent to null
 	mov r8, #2				@ initializing traverse to 2
-	ldr r3, [r0, #4]     @ load in left child
-    ldr r4, [r0, #8]     @ load in right child
+	ldr r3, [r0, #4]    	 @ load in left child
+    ldr r4, [r0, #8]    	 @ load in right child
 	mov r5, #0
-	add r5, r3, r4 		@ checking if root has no children
-	cmp r5, #0 		@ checking if addition of both left child and right child == 0 <-- meaning root has no children
+	add r5, r3, r4 			@ checking if root has no children
+	cmp r5, #0 				@ checking if addition of both left child and right child == 0 <-- meaning root has no children
 	ldreq r12, =MyHeap
-	streq r2, [r12, #0]@ If tree only has root, initialize pointer to root to 0
+	streq r2, [r12, #0]		@ If tree only has root, initialize pointer to root to 0
 	@ ldreq r0, [r0, #0]		@ If tree only has root, moving root value to r0
 	moveq r0, r10
 	moveq pc, r14			@ If tree only has root, return root
@@ -154,9 +154,9 @@ deleteMax:
 while:
 
 	@@@@@ if root has children, reaches this point
-    ldr r3, [r0, #4]     @ load in left child
-    ldr r4, [r0, #8]     @ load in right child
-    add r5, r4, r3        @ adding values of LC and RC, if both are null result is 0
+    ldr r3, [r0, #4]   	   @ load in left child
+    ldr r4, [r0, #8]	  @ load in right child
+    add r5, r4, r3     	   @ adding values of LC and RC, if both are null result is 0
     cmp r5, #0             @ NULL CASE testing if root has no children
 	beq noChild
 	b hasChild
@@ -168,7 +168,7 @@ noChild:
 	streq r2, [r9, #4]		@ if parent left child equals leaf node, delete the parent's pointer to the leaf
 	cmp r8, #1				@ check if we traversed right
 	streq r2, [r9, #8]		@ if parent right child equals current leaf, delete the parent`s pointer to the leaf
-	mov r0, r10			@ move maximum value to r0
+	mov r0, r10				@ move maximum value to r0
     mov pc, r14 			@ return root
 	
 hasChild:
@@ -197,14 +197,14 @@ hasChild:
 	@@@@ comparing both of the children
 	cmp r6, r7
 	movgt r8, #0			@ gt flag tripped when left int is greater than right
-	strgt r6, [r0, #0]
-	movgt r9, r0
-	movgt r0, r3
+	strgt r6, [r0, #0]		@ transfer left child int to current, vacant node
+	movgt r9, r0			@ current node is now the parent
+	movgt r0, r3			@ change current node to left child
 	bgt while
 	mov r8, #1				@ instructions called only when right int is greater than left
-	str r7, [r0, #0]
+	str r7, [r0, #0]		@ transfer right child int to current, vacant node
 	mov r9, r0
-	mov r0, r4
+	mov r0, r4				@ change current node to right child
 	b while
 
 
